@@ -22,8 +22,9 @@ float Neuronet::forward(QVector<float> &ins)
 void Neuronet::learn(QVector<QVector<float> > &data)
 {
     float error = 10;
-    while (fabs(error) > 0.0001)
+    while (error > 0.001)
     {
+        float sumError = 0;
         for (auto d : data)
         {
 
@@ -33,9 +34,10 @@ void Neuronet::learn(QVector<QVector<float> > &data)
 
             auto neuroRes = forward(d);
 
-            error = neuroRes - res;
+            float error = neuroRes - res;
+            sumError += fabs(error);
 
-            auto weightDelta = error*neuroRes*(1-neuroRes);
+            float weightDelta = error*neuroRes*(1-neuroRes);
 
             auto outNeuro = outLayer.getNeuros().first();
 
@@ -58,6 +60,8 @@ void Neuronet::learn(QVector<QVector<float> > &data)
                 }
             }
         }
+
+        error = sumError;
     }
 
     int a = 0;
