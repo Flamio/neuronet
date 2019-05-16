@@ -12,11 +12,15 @@ public:
 
     float forward(QVector<float>& ins);
 
+    void learn(QVector<QVector<float>>& data);
+
 signals:
 
 public slots:
 
 private:
+    const float learningRate = 0.3;
+
     NeuroLayer inputLayer;
     NeuroLayer hiddenLayer;
     NeuroLayer outLayer;

@@ -15,12 +15,15 @@ public:
 
     QVector<float>* getWeights();
 
+    float getOut() const;
 signals:
 
 public slots:
 
 private:
     QVector<float> weights;
+
+    float out = 0;
 };
 
 #endif // NEURO_H

@@ -18,3 +18,48 @@ float Neuronet::forward(QVector<float> &ins)
 
     return v.first();
 }
+
+void Neuronet::learn(QVector<QVector<float> > &data)
+{
+    float error = 10;
+    while (fabs(error) > 0.0001)
+    {
+        for (auto d : data)
+        {
+
+            auto res = d[7];
+
+            d.remove(7);
+
+            auto neuroRes = forward(d);
+
+            error = neuroRes - res;
+
+            auto weightDelta = error*neuroRes*(1-neuroRes);
+
+            auto outNeuro = outLayer.getNeuros().first();
+
+            for (int i = 0 ; i< outNeuro->getWeights()->count(); i++)
+            {
+                auto newWeight = (*outNeuro->getWeights())[i] - hiddenLayer.getNeuros()[i]->getOut()*weightDelta*learningRate;
+                (*outNeuro->getWeights())[i] = newWeight;
+            }
+
+            for (auto j = 0; j < hiddenLayer.getNeuros().count(); j++)
+            {
+                auto n = hiddenLayer.getNeuros()[j];
+                error = (*outNeuro->getWeights())[j] * weightDelta;
+                auto neuroOut = hiddenLayer.getNeuros()[j]->getOut();
+                auto weightDelta1 = error*neuroOut*(1-neuroOut);
+                for (int i = 0 ; i< n->getWeights()->count(); i++)
+                {
+                    auto newWeight = (*n->getWeights())[i] - inputLayer.getNeuros()[i]->getOut()*weightDelta1*learningRate;
+                    (*n->getWeights())[i] = newWeight;
+                }
+            }
+        }
+    }
+
+    int a = 0;
+
+}

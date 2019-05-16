@@ -13,7 +13,7 @@ NeuroLayer::NeuroLayer(int count, int neuroInsCount, QObject *parent) : QObject(
 QVector<float> &NeuroLayer::forward(QVector<float> &ins)
 {
     out.clear();
-
+    static int i = 0;
     for (Neuro* n : neuros)
     {
         float value;
@@ -21,7 +21,6 @@ QVector<float> &NeuroLayer::forward(QVector<float> &ins)
             value = n->forward(ins);
         else
         {
-            static int i = 0;
             QVector<float> v;
             v.push_back(ins[i]);
             value = n->forward(v);
@@ -29,7 +28,7 @@ QVector<float> &NeuroLayer::forward(QVector<float> &ins)
         }
         out.push_back(value);
     }
-
+    i=0;
     return out;
 }
 

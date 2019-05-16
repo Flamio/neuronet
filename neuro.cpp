@@ -18,10 +18,16 @@ float Neuro::forward(QVector<float> &inputs)
         sum += inputs[i] * weights[i];
     }
 
-    return sum / (1 + fabs(sum));
+    out = sum / (1 + fabs(sum));
+    return out;
 }
 
 QVector<float>* Neuro::getWeights()
 {
     return &weights;
+}
+
+float Neuro::getOut() const
+{
+    return out;
 }
