@@ -14,7 +14,6 @@ public:
     float forward(QVector<float>& inputs);
 
     QVector<float>* getWeights();
-
     float getOut() const;
 signals:
 

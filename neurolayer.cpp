@@ -25,7 +25,7 @@ QVector<float> &NeuroLayer::forward(QVector<float> &ins)
             v.push_back(ins[i]);
             value = n->forward(v);
             i++;
-        }
+        }        
         out.push_back(value);
     }
     i=0;

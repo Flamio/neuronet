@@ -18,7 +18,7 @@ float Neuro::forward(QVector<float> &inputs)
         sum += inputs[i] * weights[i];
     }
 
-    out = sum / (1 + fabs(sum));
+    out = 1.0/(1+exp(-sum));
     return out;
 }
 

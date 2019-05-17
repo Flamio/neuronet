@@ -1,52 +1,51 @@
 #include <QCoreApplication>
 #include "neuronet.h"
 #include <iostream>
+#include <QFile>
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    QVector<float> g;
-
-    g.push_back(1);
-    g.push_back(2);
-    g.push_back(3);
-    g.push_back(4);
-    g.push_back(5);
-    g.push_back(6);
-    g.push_back(7);
-    g.push_back(0.9);
-
-
-    QVector<float> g1;
-
-    g1.push_back(7);
-    g1.push_back(6);
-    g1.push_back(5);
-    g1.push_back(4);
-    g1.push_back(3);
-    g1.push_back(2);
-    g1.push_back(1);
-    g1.push_back(0.2);
 
     Neuronet n(&a);
 
-    QVector<QVector<float>> f;
-    f.push_back(g);
-    f.push_back(g1);
-    n.learn(f);
+    QVector<QVector<float>> v;
 
+    QFile file("learning.csv");
+    if (!file.open(QIODevice::ReadOnly)) {
+        return 1;
+    }
 
-   /* QVector<float> v;
-    for (int i = 0; i <7; i++)
-    {
-        int a;
-        std::cin >> a;
-        v.push_back(a);
-    }*/
+    while (!file.atEnd()) {
+        QVector<float> floats;
+        QByteArray line = file.readLine();
+        auto strings = line.split(';');
+        for (auto s : strings)
+        {
+            floats.append(s.trimmed().toFloat());
+        }
 
-    std::cout << n.forward(g1);
-    std::cout.flush();
+        v.append(floats);
+    }
 
-    return a.exec();
+    v.remove(0);
+
+    n.learn(v);
+
+    QString f ("2;2000;3;1;0;2;0");
+
+    auto fs = f.split(";");
+
+     QVector<float> g2;
+
+     for (auto fss : fs)
+         g2.append(fss.toFloat());
+
+    auto res = n.forward(g2);
+
+    qDebug() << res;
+
+   return a.exec();
 }

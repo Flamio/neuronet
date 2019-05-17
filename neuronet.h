@@ -19,7 +19,7 @@ signals:
 public slots:
 
 private:
-    const float learningRate = 0.3;
+    const float learningRate = 0.9;
 
     NeuroLayer inputLayer;
     NeuroLayer hiddenLayer;
