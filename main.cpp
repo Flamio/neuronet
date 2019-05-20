@@ -4,6 +4,14 @@
 #include <QFile>
 #include <QDebug>
 #include "MultilayerPerceptron.h"
+#include <QDataStream>
+
+struct Weights
+{
+    int ins;
+    int outs;
+    float w[1000];
+};
 
 int main(int argc, char *argv[])
 {
@@ -35,7 +43,32 @@ int main(int argc, char *argv[])
     mlp->addHiddenLayer(10);
     mlp->init();
 
-    auto bw = mlp->getWeights();
+    QFile file2("weights");
+    file2.open(QIODevice::ReadOnly);
+
+    std::vector<WeightMatrix> matrix;
+
+    while (true)
+    {
+        Weights w;
+
+        auto c = sizeof(Weights);
+        auto readed = file2.read((char*)&w, c);
+        if (readed < c)
+            break;
+        WeightMatrix wm(w.ins,w.outs, 0);
+        wm.inputDim = w.ins;
+        wm.outputDim = w.outs;
+        wm.w.clear();
+        for (int i =0; i<wm.outputDim*wm.inputDim;i++)
+            wm.w.push_back(w.w[i]);
+
+        matrix.push_back(wm);
+    }
+
+    file2.close();
+
+    mlp->setWeights(matrix);
 
     std::vector<MultilayerPerceptron::TrainingElement> trainingSet;
 
@@ -70,13 +103,25 @@ int main(int argc, char *argv[])
 
     auto ew = mlp->getWeights();
 
-    QFile wf("weights", QIODevice::WriteOnly);
+    /* QFile file2("weights");
+    file2.open(QIODevice::WriteOnly);
 
-    for (WeightMatrix m : ew)
+    for (WeightMatrix wg : ew)
     {
-        wf.write(QString::number(m.inputDim));
-        wf.write(QString::number(m.outputDim));
+        Weights w;
+        memset(w.w,0x00,1000);
+        w.ins = wg.inputDim;
+        w.outs = wg.outputDim;
+
+        for (int i = 0; i<wg.w.size(); i++)
+            w.w[i] = wg.w[i];
+
+        auto c = sizeof(w);
+        auto readed = file2.write((char*)&w,c);
+        file2.flush();
     }
+
+    file2.close();*/
 
     return a.exec();
 }
