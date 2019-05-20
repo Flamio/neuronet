@@ -12,10 +12,12 @@ TEMPLATE = app
 SOURCES += main.cpp \
     neuro.cpp \
     neurolayer.cpp \
-    neuronet.cpp
+    neuronet.cpp \
+    MultilayerPerceptron.cc
 
 HEADERS += \
     neuro.h \
     random.h \
     neurolayer.h \
-    neuronet.h
+    neuronet.h \
+    MultilayerPerceptron.h

@@ -3,13 +3,11 @@
 #include <iostream>
 #include <QFile>
 #include <QDebug>
+#include "MultilayerPerceptron.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-
-
-    Neuronet n(&a);
 
     QVector<QVector<float>> v;
 
@@ -21,7 +19,7 @@ int main(int argc, char *argv[])
     while (!file.atEnd()) {
         QVector<float> floats;
         QByteArray line = file.readLine();
-        auto strings = line.split(';');
+        auto strings = line.split(',');
         for (auto s : strings)
         {
             floats.append(s.trimmed().toFloat());
@@ -32,20 +30,53 @@ int main(int argc, char *argv[])
 
     v.remove(0);
 
-    n.learn(v);
+    auto mlp = new MultilayerPerceptron(4, 1);
+    mlp->addHiddenLayer(10);
+    mlp->addHiddenLayer(10);
+    mlp->init();
 
-    QString f ("2;2000;3;1;0;2;0");
+    auto bw = mlp->getWeights();
 
-    auto fs = f.split(";");
+    std::vector<MultilayerPerceptron::TrainingElement> trainingSet;
 
-     QVector<float> g2;
+    for  (auto vv: v)
+    {
+        std::vector<float> teInput;
+        for (int i = 0; i<vv.count()-1; i++)
+        {
+            teInput.push_back(vv[i] != 0 ? 1/vv[i]:0.0f);
+        }
+        std::vector<float> teOutput;
+        teOutput.push_back(vv[vv.count()-1]);
 
-     for (auto fss : fs)
-         g2.append(fss.toFloat());
+        trainingSet.push_back(MultilayerPerceptron::TrainingElement(teInput, teOutput));
+    }
 
-    auto res = n.forward(g2);
+    mlp->setTrainingSet(trainingSet);
 
-    qDebug() << res;
+    float error = 10;
+    while (error > 0.01)
+    {
+        error = mlp->train(0.5f);
+        qDebug() << error;
+    }
 
-   return a.exec();
+    std::vector<float> ins;
+    ins.push_back(1/(float)2);
+    ins.push_back(1/(float)1000);
+    ins.push_back(1/(float)10);
+    ins.push_back(1.0f);
+    auto out = mlp->classify(ins);
+
+    auto ew = mlp->getWeights();
+
+    QFile wf("weights", QIODevice::WriteOnly);
+
+    for (WeightMatrix m : ew)
+    {
+        wf.write(QString::number(m.inputDim));
+        wf.write(QString::number(m.outputDim));
+    }
+
+    return a.exec();
 }
