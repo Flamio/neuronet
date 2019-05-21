@@ -10,14 +10,10 @@ CONFIG -= app_bundle
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    neuro.cpp \
-    neurolayer.cpp \
-    neuronet.cpp \
-    MultilayerPerceptron.cc
+    MultilayerPerceptron.cc \
+    analyze.cpp
 
 HEADERS += \
-    neuro.h \
-    random.h \
-    neurolayer.h \
-    neuronet.h \
-    MultilayerPerceptron.h
+    MultilayerPerceptron.h \
+    weights.h \
+    analyze.h
