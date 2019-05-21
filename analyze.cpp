@@ -68,8 +68,8 @@ void Analyze::train(float error_)
 
 void Analyze::loadWeights()
 {
-    QFile file("weights");
-    if (!file.open(QIODevice::ReadOnly));
+    QFile file("weights.bin");
+    if (!file.open(QIODevice::ReadOnly))
     {
         qDebug () << file.errorString();
         qDebug() << "weights не открыт";
@@ -103,7 +103,7 @@ void Analyze::loadWeights()
 
 void Analyze::saveWeights()
 {
-    QFile file2("weights");
+    QFile file2("weights.bin");
     file2.open(QIODevice::WriteOnly);
 
     auto ew = mlp->getWeights();
@@ -128,5 +128,10 @@ void Analyze::saveWeights()
 
 float Analyze::calcResult(std::vector<float> &ins)
 {
-     return *mlp->classify(ins).begin();
+    std::vector<float> nIns;
+    for (auto i : ins)
+        nIns.push_back(i == 0 ? 0.0f:1.0f/i);
+
+    auto result = *mlp->classify(nIns).begin();;
+    return result;
 }
