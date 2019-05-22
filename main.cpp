@@ -19,9 +19,9 @@ int main(int argc, char *argv[])
 
     Analyze an;
 
-    an.loadWeights();
-    //an.train(0.001);
-    //an.saveWeights();
+   // an.loadWeights();
+    an.train(0.001, "learning.csv");
+   // an.saveWeights();
 
     auto out = an.calcResult(ins);
 

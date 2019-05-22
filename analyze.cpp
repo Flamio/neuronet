@@ -17,13 +17,13 @@ Analyze::~Analyze()
     delete mlp;
 }
 
-void Analyze::train(float error_)
+void Analyze::train(float error_, const QString& filename)
 {
     QVector<QVector<float>> v;
 
-    QFile file("learning.csv");
+    QFile file(filename);
     if (!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "не открыт learning.csv";
+        qDebug() << "не открыт " << filename;
         return;
     }
 

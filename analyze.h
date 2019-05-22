@@ -11,7 +11,7 @@ class Analyze : public QObject
 public:
     explicit Analyze(QObject *parent = 0);
     virtual ~Analyze();
-    void train(float error);
+    void train(float error, const QString& filename);
     void loadWeights();
     void saveWeights();
 
