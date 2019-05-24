@@ -48,7 +48,7 @@ void Analyze::train(float error_, const QString& filename)
         std::vector<float> teInput;
         for (int i = 0; i<vv.count()-1; i++)
         {
-            teInput.push_back(vv[i] != 0 ? 1/vv[i]:0.0f);
+            teInput.push_back(normalize(vv[i], i));
         }
         std::vector<float> teOutput;
         teOutput.push_back(vv[vv.count()-1]);
@@ -61,7 +61,7 @@ void Analyze::train(float error_, const QString& filename)
     float error = 10;
     while (error > error_)
     {
-        error = mlp->train(0.5f);
+        error = mlp->train(0.3f);
         qDebug() << error;
     }
 }
@@ -129,9 +129,47 @@ void Analyze::saveWeights()
 float Analyze::calcResult(std::vector<float> &ins)
 {
     std::vector<float> nIns;
-    for (auto i : ins)
-        nIns.push_back(i == 0 ? 0.0f:1.0f/i);
+    for (int i=0; i<ins.size(); i++)
+        nIns.push_back(normalize(ins[i], i));
 
     auto result = *mlp->classify(nIns).begin();;
     return result;
+}
+
+float Analyze::normalize(float n, int i)
+{
+    float max;
+    float min;
+
+    switch (i)
+    {
+    case 0:
+    {
+        max = 100;
+        min = 0;
+        break;
+    }
+    case 1:
+    {
+        max = 1000000;
+        min = 0;
+        break;
+    }
+    case 2:
+    {
+        max = 1000;
+        min = 0;
+        break;
+    }
+    case 3:
+    {
+        max = 10;
+        min = 0;
+        break;
+    }
+    }
+
+    float res = (n - min)*(0.9-0) / (max-min);
+
+    return res;
 }

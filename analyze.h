@@ -24,6 +24,8 @@ public slots:
 
 private:
     MultilayerPerceptron* mlp = nullptr;
+
+    float normalize(float n, int i);
 };
 
 #endif // NEURONET_H
